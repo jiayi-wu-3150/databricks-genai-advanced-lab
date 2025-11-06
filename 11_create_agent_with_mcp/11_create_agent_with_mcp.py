@@ -502,6 +502,12 @@
 # MAGIC %restart_python
 
 # COMMAND ----------
+import mlflow
+
+mlflow.set_tracking_uri("databricks")
+mlflow.set_experiment("/Shared/genai-advanced-workshop")
+
+# COMMAND ----------
 
 from agent import AGENT
 

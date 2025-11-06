@@ -53,8 +53,8 @@ import mlflow
 import os
 
 # Let's re-use an existing experiment
-xp_name = os.getcwd().rsplit("/", 1)[0]+"/05_eval_agent_and_deploy/05_eval_agent_and_deploy"
-mlflow.set_experiment(xp_name)
+mlflow.set_tracking_uri("databricks")
+mlflow.set_experiment("/Shared/genai-advanced-workshop")
 
 accuracy_guidelines = [
   """
@@ -94,11 +94,11 @@ assessments = [
 
 def get_or_create_monitor():
   try:
-    external_monitor = get_external_monitor(experiment_name=xp_name)
+    external_monitor = get_external_monitor(experiment_name="/Shared/genai-advanced-workshop")
     print(f"Monitor already exists: {external_monitor}, updating it")
 
     external_monitor = update_external_monitor(
-      experiment_name=xp_name,
+      experiment_name="/Shared/genai-advanced-workshop",
       assessments_config=AssessmentsSuiteConfig(
           sample=1.0,  # sampling rate
           assessments=assessments

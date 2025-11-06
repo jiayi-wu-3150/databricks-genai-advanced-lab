@@ -56,6 +56,13 @@ import shutil
 shutil.copy("../04_create_agent_with_vsi_and_tools/agent.py", "./agent.py")
 
 # COMMAND ----------
+# use the same experiment
+import mlflow
+
+mlflow.set_tracking_uri("databricks")
+mlflow.set_experiment("/Shared/genai-advanced-workshop")
+
+# COMMAND ----------
 
 from agent import AGENT
 

@@ -24,8 +24,7 @@ import mlflow
 from databricks.sdk import WorkspaceClient
 # Let's re-use an existing experiment
 mlflow.set_tracking_uri("databricks")
-xp_name = os.getcwd().rsplit("/", 1)[0]+"/05_eval_agent_and_deploy/05_eval_agent_and_deploy"
-mlflow.set_experiment(xp_name)
+mlflow.set_experiment("/Shared/genai-advanced-workshop")
 
 # COMMAND ----------
 
@@ -99,12 +98,12 @@ label_answers = create_labeling_session(
 # COMMAND ----------
 
 import mlflow 
-mlflow.search_runs(experiment_names=[xp_name])
+mlflow.search_runs(experiment_names=["/Shared/genai-advanced-workshop"])
 
 # COMMAND ----------
 
 # Get most recent eval run
-runs = mlflow.search_runs(experiment_names=[xp_name], filter_string="status = 'FINISHED'", order_by=["start_time DESC"], max_results=1)
+runs = mlflow.search_runs(experiment_names=["/Shared/genai-advanced-workshop"], filter_string="metrics.`safety/mean` > 0.8", order_by=["start_time DESC"], max_results=1)
 
 # Query for the traces we just generated from that run.
 # You can also paste run_id here
@@ -126,7 +125,7 @@ print(f"Share this Review App with your team: {label_answers.url}")
 # COMMAND ----------
 
 # Assign the feedback to the session
-label_answers.set_assigned_users(["himanshu.gupta@databricks.com"]) # TODO: Change the email address to your user(s) or group(s)
+label_answers.set_assigned_users(["jiayi.wu@databricks.com"]) # TODO: Change the email address to your user(s) or group(s)
 
 # COMMAND ----------
 

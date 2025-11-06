@@ -29,7 +29,7 @@ import os
 import mlflow
 from mlflow.entities import Prompt
 mlflow.set_registry_uri("databricks-uc")
-# os.environ["OPENAI_API_KEY"] = <Your API key>
+mlflow.set_experiment("/Shared/genai-advanced-workshop")
 
 # COMMAND ----------
 

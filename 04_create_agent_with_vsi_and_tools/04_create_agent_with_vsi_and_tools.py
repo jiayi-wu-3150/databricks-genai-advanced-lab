@@ -332,6 +332,13 @@ dbutils.library.restartPython()
 
 # COMMAND ----------
 
+import mlflow
+
+mlflow.set_tracking_uri("databricks")
+mlflow.set_experiment("/Shared/genai-advanced-workshop")
+
+# COMMAND ----------
+
 from agent import AGENT
 
 result = AGENT.predict({"input": [{"role": "user", "content": "What color options are available for the Aria Modern Bookshelf?"}]})
