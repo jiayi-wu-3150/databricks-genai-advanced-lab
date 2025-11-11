@@ -75,18 +75,70 @@ dbutils.widgets.text("schema_name", schema_name)
 # COMMAND ----------
 
 # MAGIC %sql
+# MAGIC # -- unflatten json
 # MAGIC WITH corpus AS (
 # MAGIC   SELECT
 # MAGIC     path,
 # MAGIC     ai_parse_document(content) AS parsed
-# MAGIC   FROM
-# MAGIC     READ_FILES('/Volumes/databricks_workshop/jywu/pdfs/', format => 'binaryFile')
+# MAGIC   FROM READ_FILES('/Volumes/uc_fd_genai/jywu/pdfs/', format => 'binaryFile')
 # MAGIC )
-# MAGIC SELECT 
-# MAGIC    path as doc_uri,
-# MAGIC    array_join(transform(parsed:document.pages::ARRAY<STRUCT<content:STRING>>, x -> x.content), '\n') AS content
-# MAGIC FROM corpus
-# MAGIC ;
+# MAGIC SELECT
+# MAGIC   c.path                      AS doc_uri,
+# MAGIC   e.col.bbox[0].page_id       AS page_id,
+# MAGIC   e.col.content,
+# MAGIC   e.col.description,
+# MAGIC   e.col.type,
+# MAGIC   e.col.bbox[0].coord[0]      AS x0,
+# MAGIC   e.col.bbox[0].coord[1]      AS y0,
+# MAGIC   e.col.bbox[0].coord[2]      AS x1,
+# MAGIC   e.col.bbox[0].coord[3]      AS y1
+# MAGIC FROM corpus c
+# MAGIC LATERAL VIEW explode(
+# MAGIC   from_json(
+# MAGIC     variant_get(
+# MAGIC       variant_get(c.parsed, '$.document', 'VARIANT'),
+# MAGIC       '$.elements',
+# MAGIC       'STRING'
+# MAGIC     ),
+# MAGIC     'ARRAY<STRUCT<
+# MAGIC         page_id INT,
+# MAGIC         content STRING,
+# MAGIC         description STRING,
+# MAGIC         type STRING,
+# MAGIC         bbox ARRAY<STRUCT<
+# MAGIC           page_id INT,
+# MAGIC           coord ARRAY<DOUBLE>
+# MAGIC         >>
+# MAGIC     >>'
+# MAGIC   )
+# MAGIC ) e
+# MAGIC LIMIT 20
+
+
+# COMMAND ----------
+
+# MAGIC %sql
+# MAGIC # -- combine them together for chunking
+# MAGIC WITH corpus AS (
+# MAGIC   SELECT
+# MAGIC     path,
+# MAGIC     ai_parse_document(content) AS parsed
+# MAGIC   FROM READ_FILES('/Volumes/uc_fd_genai/jywu/pdfs/', format => 'binaryFile')
+# MAGIC )
+# MAGIC SELECT
+# MAGIC   path AS doc_uri,
+# MAGIC   array_join(
+# MAGIC     transform(
+# MAGIC       filter(
+# MAGIC         parsed:document:elements::ARRAY<STRUCT<content:STRING, description:STRING>>,
+# MAGIC         e -> e.content IS NOT NULL OR e.description IS NOT NULL
+# MAGIC       ),
+# MAGIC       e -> coalesce(e.content, e.description)
+# MAGIC     ),
+# MAGIC     '\n'
+# MAGIC   ) AS content
+# MAGIC FROM corpus;
+
 
 # COMMAND ----------
 
