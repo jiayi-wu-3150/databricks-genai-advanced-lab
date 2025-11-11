@@ -29,7 +29,7 @@ import os
 import mlflow
 from mlflow.entities import Prompt
 mlflow.set_registry_uri("databricks-uc")
-mlflow.set_experiment("/Shared/genai-advanced-workshop")
+mlflow.set_experiment(EXPERIMENT_NAME)
 
 # COMMAND ----------
 

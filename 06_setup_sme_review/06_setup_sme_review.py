@@ -24,7 +24,7 @@ import mlflow
 from databricks.sdk import WorkspaceClient
 # Let's re-use an existing experiment
 mlflow.set_tracking_uri("databricks")
-mlflow.set_experiment("/Shared/genai-advanced-workshop")
+mlflow.set_experiment(EXPERIMENT_NAME)
 
 # COMMAND ----------
 

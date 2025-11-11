@@ -320,12 +320,15 @@ help(GenieAgent)
 
 dbutils.library.restartPython()
 
+# COMMAND ----------
+
+# MAGIC %run ../00_setup/config
 
 # COMMAND ----------
 import mlflow
 
 mlflow.set_tracking_uri("databricks")
-mlflow.set_experiment("/Shared/genai-advanced-workshop")
+mlflow.set_experiment(EXPERIMENT_NAME)
 
 # COMMAND ----------
 
