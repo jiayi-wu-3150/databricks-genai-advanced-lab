@@ -116,15 +116,38 @@ display(dbutils.fs.ls(f"/Volumes/{catalog_name}/{schema_name}/pdfs"))
 import os
 root = os.getcwd().rsplit("/", 1)[0] + '/'
 current_file = os.getcwd().rsplit("/", 1)[-1]
+print(f'The following code will swap catalog and schema name in {root}, except the current file.')
 
+# COMMAND ----------
+old_catalog = 'databricks_workshop'
+new_catalog = catalog_name
+old_schema = 'jywu'
+new_schema = schema_name
+
+# COMMAND ----------
+# replace catalog name
 for dirpath, _, filenames in os.walk(root):
     for filename in filenames:
         if filename.endswith((".py", ".ipynb")) and not filename.startswith(current_file):
             filepath = os.path.join(dirpath, filename)
             with open(filepath, "r", encoding="utf-8") as f:
                 content = f.read()
-            if "jywu" in content:
-                new_content = content.replace("jywu", f"{schema_name}")
+            if old_catalog in content:
+                new_content = content.replace(old_catalog, new_catalog)
+                with open(filepath, "w", encoding="utf-8") as f:
+                    f.write(new_content)
+                print(f"Updated: {filepath}")
+
+# COMMAND ----------
+# replace schema name
+for dirpath, _, filenames in os.walk(root):
+    for filename in filenames:
+        if filename.endswith((".py", ".ipynb")) and not filename.startswith(current_file):
+            filepath = os.path.join(dirpath, filename)
+            with open(filepath, "r", encoding="utf-8") as f:
+                content = f.read()
+            if old_schema in content:
+                new_content = content.replace(old_schema, new_schema)
                 with open(filepath, "w", encoding="utf-8") as f:
                     f.write(new_content)
                 print(f"Updated: {filepath}")
