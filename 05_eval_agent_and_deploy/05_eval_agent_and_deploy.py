@@ -194,7 +194,9 @@ for request, facts in zip(data["request"], data["expected_facts"]):
                 {"role": "user", "content": request}
             ]
         },
-        "expected_response": expected
+        "expectations": {
+            "expected_response": expected
+        }    
     })
 eval_data[0]
 
